@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--<?xml version="1.0" encoding="utf-8"?>：標明這是一個 XML 文件，使用 UTF-8 編碼。
+<Report>：FastReport 定義報表的根元素。
+  ScriptLanguage="CSharp"：指定報表中使用的腳本語言為 C#。
+  ReportInfo.Created 和 ReportInfo.Modified：分別記錄報表創建和修改的日期與時間。
+  ReportInfo.CreatorVersion="2025.1.0.0"：指示創建報表的版本。-->
+<Report ScriptLanguage="CSharp" ReportInfo.Created="02/17/2025 11:25:12" ReportInfo.Modified="02/17/2025 11:26:17" ReportInfo.CreatorVersion="2025.1.0.0">
+  <!--<Dictionary>：包含報表數據源的定義。
+<SQConnectionString 是用來指定數據庫連接信息的字符串。
+<TableDataSource Name="Employees">：定義來自 Employees 表的數據源，設置了資料表名稱與數據類型。
+<Column>：定義表格的每一列，這裡是 id、name、salary、managerId 四個字段。-->
+  <Dictionary>
+    <SQLiteDataConnection Name="Connection" ConnectionString="rijcmlqIltkgxALMArhJ2W63qXqywkdDoT5vzh4qH4kLRCOr2Jq6EQeTM6NHWthwb+Xt3ycpV4V/ZgHwDmYMrNRArB9kpPeLsEuQ8mFXJtbl/Erd0ua3OC8Yd/hqaUyB8yTU+n7">
+      <TableDataSource Name="Employees" DataType="System.Int32" Enabled="true" TableName="Employees">
+        <Column Name="id" DataType="System.Int64"/>
+        <Column Name="name" DataType="System.String"/>
+        <Column Name="salary" DataType="System.Int64"/>
+        <Column Name="managerId" DataType="System.Int64"/>
+      </TableDataSource>
+    </SQLiteDataConnection>
+  </Dictionary>
+
+  <!--有主管的員工-->
+  <!--<ReportTitleBand>：標題
+  <PageHeaderBand>：定義頁面頭部，包括列標題。
+  <DataBand Name="Data1">：用來顯示數據，這裡是顯示有主管的員工的資料。-->
+  <ReportPage Name="Page1" Watermark.Font="微軟正黑體, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="47.25">
+      <TextObject Name="Text13" Left="207.9" Top="9.45" Width="300" Height="37.8" Text="【有主管的員工】" HorzAlign="Center" Font="微軟正黑體, 18pt"/>
+    </ReportTitleBand>
+    
+    <PageHeaderBand Name="PageHeader1" Top="51.25" Width="718.2" Height="37.8">
+      <TextObject Name="Text2" Width="151.2" Height="28.35" Text="員工編號" Font="微軟正黑體, 14pt"/>
+      <TextObject Name="Text4" Left="151.2" Width="151.2" Height="28.35" Text="員工名字" Font="微軟正黑體, 14pt"/>
+      <TextObject Name="Text6" Left="302.4" Width="151.2" Height="28.35" Text="員工薪水" Font="微軟正黑體, 14pt"/>
+      <TextObject Name="Text8" Left="453.6" Width="151.2" Height="28.35" Text="主管編號" Font="微軟正黑體, 14pt"/>
+    </PageHeaderBand>
+    
+    <DataBand Name="Data1" Top="93.05" Width="718.2" Height="122.85">
+      <TextObject Name="Text6" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithManager.id]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
+      <TextObject Name="Text8" Left="151.2" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithManager.name]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
+      <TextObject Name="Text10" Left="302.4" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithManager.salary]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
+      <TextObject Name="Text12" Left="453.6" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithManager.managerId]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
+    </DataBand>
+    
+    <!--<PageFooterBand>：頁腳區域-->
+    <PageFooterBand Name="PageFooter1" Top="346.75" Width="718.2" Height="18.9"/>
+  </ReportPage>
+
+  <!--薪水高於主管的員工-->
+  <ReportPage Name="Page2" Watermark.Font="微軟正黑體, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="47.25">
+      <TextObject Name="Text13" Left="207.9" Top="9.45" Width="300" Height="37.8" Text="【薪水高於主管的員工】" HorzAlign="Center" Font="微軟正黑體, 18pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="51.25" Width="718.2" Height="37.8">
+      <TextObject Name="Text4" Width="151.2" Height="28.35" Text="員工名字" Font="微軟正黑體, 14pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data2" Top="219.9" Width="718.2" Height="122.85">
+      <TextObject Name="Text8" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithGoodSalary.Employee]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="346.75" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>
