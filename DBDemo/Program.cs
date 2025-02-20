@@ -14,8 +14,8 @@ namespace DBDemo
     {
         static void Main(string[] args)
         {
-
-            string connectionString = "Data Source=database.db;Version=3;"; // 資料庫連線字串
+            // connectionString：SQLite 連線字串，表示將連接名為 database.db ，Version=3 是 SQLite 的版本。
+            string connectionString = "Data Source=database.db;Version=3;";
 
             // 檢查資料庫檔案是否存在，若不存在則創建資料庫
             if (!File.Exists("./database.db"))
@@ -30,13 +30,14 @@ namespace DBDemo
             Console.WriteLine($"資料庫檔案位置: {Path.GetFullPath("database.db")}");
 
             // 開啟與資料庫的連線
+            //使用 using 語法，確保使用完 SQLite 連線後會自動釋放資源。
             using (var connection = new SQLiteConnection(connectionString))
             {
                 try
                 {
                     connection.Open(); // 開啟資料庫連線
 
-                    // 創建員工資料表格
+                    // 創建員工資料表格  @ 不需要 \n 來換行。
                     string createTableQuery = @"
                         CREATE TABLE IF NOT EXISTS Employees (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,  -- id 欄位，自動遞增
@@ -62,15 +63,18 @@ namespace DBDemo
                     Console.WriteLine("資料插入成功。");
 
                     // 查詢所有員工資料並顯示
-                    var allEmployees = connection.Query("SELECT id, name, salary, managerId FROM Employees").ToList();
+                    var allEmployees = connection.Query("SELECT id, name, salary, managerId FROM Employees").ToList();  //Query：查詢資料，轉成 List。
 
                     // 顯示查詢結果，以表格樣式格式化
                     Console.WriteLine("+-----+-------+--------+-----------+");
                     Console.WriteLine("| id  | name  | salary | managerId |");
                     Console.WriteLine("+-----+-------+--------+-----------+");
-                    foreach (var employee in allEmployees)
+                    foreach (var employee in allEmployees)  
                     {
-                        Console.WriteLine($"| {employee.id,-4} | {employee.name,-5} | {employee.salary,-6} | {employee.managerId?.ToString() ?? "NULL",-9} |");
+                        //負數 ：左對齊  正數：右對齊
+                        //employee.managerId 可能為 NULL，所以用 ?. 來確保不會發生 空指標異常
+                        //managerId 不為 NULL，則 ToString() 轉成字串。managerId 為 NULL，則?.ToString() 會返回 NULL。
+                        Console.WriteLine($"| {employee.id,-4} | {employee.name,-5} | {employee.salary,-6} | {employee.managerId?.ToString() ?? "NULL",-9} |");  
                     }
                     Console.WriteLine("+-----+-------+--------+-----------+");
 
@@ -108,7 +112,7 @@ namespace DBDemo
                     Console.WriteLine("+----------+");
 
                     // 動態設定報表檔案路徑
-                    string reportFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Untitled.frx");
+                    string reportFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Untitled.frx");//完整路徑
 
                     // 檢查報表模板檔案是否存在
                     if (!File.Exists(reportFilePath))
@@ -120,8 +124,7 @@ namespace DBDemo
                     try
                     {
 
-
-                        Report report = new Report();
+                        Report report = new Report();  //創建一個 Report 物件，該物件來自 FastReport，負責處理報表。
                         report.Load(reportFilePath); // 載入報表檔案
 
                         // 取得有主管(managerId)的員工
@@ -141,17 +144,19 @@ namespace DBDemo
                         ((DataBand)report.Report.FindObject("Data1")).DataSource = report.GetDataSource("employeesWithManager");
                         ((DataBand)report.Report.FindObject("Data2")).DataSource = report.GetDataSource("employeesWithGoodSalary");
 
-                        // 準備報表
+                        // 準備報表，這會生成報表的內容，並且準備好進行匯出。
                         report.Prepare();
 
-                        // 設定 PDF 輸出路徑
+                        // Path.Combine(AppDomain.CurrentDomain.BaseDirectory)：生成輸出資料夾的完整路徑，並確保該資料夾存在。如果資料夾不存在，則創建它。
                         string outputDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-                        if (!Directory.Exists(outputDirectory)) Directory.CreateDirectory(outputDirectory);
-
-                        // 設定 PDF 輸出檔案名稱
+                        if (!Directory.Exists(outputDirectory)) //如果目錄不存在，則返回 false。 
+                        {
+                            Directory.CreateDirectory(outputDirectory);   //目錄不存在，就創建它
+                        }
+                        //設定 PDF 檔案名稱和儲存路徑
                         string pdfFilePath = Path.Combine(outputDirectory, "EmployeeReport.pdf");
 
-                        // 創建 PDF 匯出器
+                        // PDFSimpleExport物件是用來將報表轉換並匯出為 PDF 格式的工具。
                         PDFSimpleExport pdfExport = new PDFSimpleExport();
 
                         // 將報表匯出為 PDF
@@ -162,12 +167,12 @@ namespace DBDemo
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"報表處理錯誤: {ex.Message}");
+                        Console.WriteLine($"報表處理錯誤: {ex}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"資料庫操作錯誤: {ex.Message}");
+                    Console.WriteLine($"資料庫操作錯誤: {ex}");
                 }
             }
         }
@@ -187,6 +192,8 @@ namespace DBDemo
                 FROM Employees e1 
                 JOIN Employees e2 ON e1.managerId = e2.id
                 WHERE e1.salary > e2.salary";
+
+            //返回一個 DataTable，包含所有薪水高於其主管薪水的員工
             return ExecuteQuery(connection, query);
         }
 
@@ -194,9 +201,12 @@ namespace DBDemo
         static DataTable ExecuteQuery(SQLiteConnection connection, string query)
         {
             var dataTable = new DataTable();
+            //SQLiteCommand：用來執行 SQL 查詢，並傳入資料庫連線和查詢語句。
+            //SQLiteDataAdapter：用來 DataTable，這會將查詢結果載入到 DataTable 中。
             using (var command = new SQLiteCommand(query, connection))
             using (var dataAdapter = new SQLiteDataAdapter(command))
             {
+                //dataAdapter.Fill(dataTable) 會執行 SQL 查詢，並將查詢的結果存入 dataTable 物件中。
                 dataAdapter.Fill(dataTable);
             }
             return dataTable;

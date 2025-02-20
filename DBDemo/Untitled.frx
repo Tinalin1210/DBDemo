@@ -6,11 +6,10 @@
   ReportInfo.CreatorVersion="2025.1.0.0"：指示創建報表的版本。-->
 <Report ScriptLanguage="CSharp" ReportInfo.Created="02/17/2025 11:25:12" ReportInfo.Modified="02/17/2025 11:26:17" ReportInfo.CreatorVersion="2025.1.0.0">
   <!--<Dictionary>：包含報表數據源的定義。
-<SQConnectionString 是用來指定數據庫連接信息的字符串。
-<TableDataSource Name="Employees">：定義來自 Employees 表的數據源，設置了資料表名稱與數據類型。
-<Column>：定義表格的每一列，這裡是 id、name、salary、managerId 四個字段。-->
+<SQConnectionString 是用來指定數據庫連接信息的字符串。-->
   <Dictionary>
     <SQLiteDataConnection Name="Connection" ConnectionString="rijcmlqIltkgxALMArhJ2W63qXqywkdDoT5vzh4qH4kLRCOr2Jq6EQeTM6NHWthwb+Xt3ycpV4V/ZgHwDmYMrNRArB9kpPeLsEuQ8mFXJtbl/Erd0ua3OC8Yd/hqaUyB8yTU+n7">
+      <!--DataType="System.Int32"	設定資料的類型為 Int32（整數） Enabled="true"	是否啟用這個資料來源，true 代表啟用。 TableName資料表的名稱  Column 欄位-->
       <TableDataSource Name="Employees" DataType="System.Int32" Enabled="true" TableName="Employees">
         <Column Name="id" DataType="System.Int64"/>
         <Column Name="name" DataType="System.String"/>
@@ -22,7 +21,7 @@
 
   <!--有主管的員工-->
   <!--<ReportTitleBand>：標題
-  <PageHeaderBand>：定義頁面頭部，包括列標題。
+  <PageHeaderBand>：頁首。
   <DataBand Name="Data1">：用來顯示數據，這裡是顯示有主管的員工的資料。-->
   <ReportPage Name="Page1" Watermark.Font="微軟正黑體, 60pt">
     <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="47.25">
@@ -43,8 +42,8 @@
       <TextObject Name="Text12" Left="453.6" Top="37.8" Width="94.5" Height="18.9" Text="[employeesWithManager.managerId]" VertAlign="Center" Font="微軟正黑體, 12pt"/>
     </DataBand>
     
-    <!--<PageFooterBand>：頁腳區域-->
-    <PageFooterBand Name="PageFooter1" Top="346.75" Width="718.2" Height="18.9"/>
+    <!--<PageFooterBand>：頁尾區域-->
+    <PageFooterBand Name="PageFooter1" Top="80" Width="718.2" Height="18.9" />
   </ReportPage>
 
   <!--薪水高於主管的員工-->
